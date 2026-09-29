@@ -3,7 +3,6 @@ package io.nology.project.employee.dtos;
 import java.time.LocalDate;
 
 import io.nology.project.employee.entity.ContractType;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 
