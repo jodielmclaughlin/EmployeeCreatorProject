@@ -90,10 +90,10 @@ public class EmployeeFactory {
 
     private String generateUniquePhoneNumber(String phoneNumber) {
         if (phoneNumber == null || phoneNumber.isBlank()) {
-            phoneNumber = faker.internet().emailAddress();
+            phoneNumber = faker.phoneNumber().cellPhone();
         }
         while (usedPhoneNumbers.contains(phoneNumber)) {
-            phoneNumber = faker.internet().emailAddress();
+            phoneNumber = faker.phoneNumber().cellPhone();
         }
         return phoneNumber;
     }
