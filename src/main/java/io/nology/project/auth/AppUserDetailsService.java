@@ -17,7 +17,7 @@ public class AppUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         AppUser user = this.repo.findByEmail(email)
-                .orElseThrow(() -> new UserNameNotFoundException("No account found for email: " + email));
+                .orElseThrow(() -> new UsernameNotFoundException("No account found for email: " + email));
         return new AppUserDetails(user);
     }
 }

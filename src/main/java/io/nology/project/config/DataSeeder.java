@@ -40,6 +40,11 @@ public class DataSeeder implements CommandLineRunner {
             this.appUserFactory.create(options);
         }
 
+        if(!appUserFactory.hasUser("employee@test.com")){
+            var options = AppUserFactoryOptions.builder().email("employee@test.com").role(Role.EMPLOYEE).build();
+            this.appUserFactory.create(options);
+        }
+
     }
 
 }
