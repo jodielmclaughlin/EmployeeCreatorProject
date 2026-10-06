@@ -29,6 +29,7 @@ public abstract class BaseEntity {
     public void setId(Long id) {
         this.id = id;
     }
+
     @PrePersist
     public void onCreate() {
         Date now = new Date();
