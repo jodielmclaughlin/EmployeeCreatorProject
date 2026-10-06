@@ -37,8 +37,12 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
         throws ServletException, IOException {
+        String token = extractToken(request);
+        if(token == null || token.isBlank()){
+            filterChain.doFilter(request, response);
+            return;
+        }
         try{
-            String token = extractToken(request);
             Jws<Claims> claims = jwtService.parse(token);
             Long userId = Long.valueOf(claims.getPayload().getSubject());
             Role role = Role.valueOf(claims.getPayload().get("role", String.class));
@@ -54,10 +58,10 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private String extractToken(HttpServletRequest request){
-        String cookieToken = extractCookie(request, "access_token");
-        if(cookieToken != null){
-            return cookieToken;
-        }
+//        String cookieToken = extractCookie(request, "access_token");
+//        if(cookieToken != null){
+//            return cookieToken;
+//        }
         return extractBearerHeader(request);
     }
 
@@ -68,7 +72,7 @@ public class JwtFilter extends OncePerRequestFilter {
         return Arrays.stream(request.getCookies())
                 .filter(c -> c.getName().equals(name))
                 .findFirst()
-                .map(Cookie::getName)
+                .map(Cookie::getValue)
                 .orElse(null);
     }
 

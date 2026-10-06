@@ -1,4 +1,6 @@
 import type { Employee, ContractType } from "../types/employee";
+import {authHeaders} from "./authApi.ts";
+
 
 interface CreateEmployeeDTO {
     firstName: string;
@@ -22,7 +24,9 @@ interface UpdateEmployeeDTO {
 }
 
 export async function getAllEmployees(){
-    const response = await fetch("http://localhost:8080/employees");
+    const response = await fetch("http://localhost:8080/employees", {
+        headers: authHeaders(),
+    });
     if (!response.ok){
         throw new Error("Could not fetch employees")
     }
@@ -30,7 +34,9 @@ export async function getAllEmployees(){
 }
 
 export async function getEmployee(id: number){
-    const response = await fetch(`http://localhost:8080/employees/${id}`);
+    const response = await fetch(`http://localhost:8080/employees/${id}`, {
+        headers: authHeaders(),
+    });
     if (!response.ok){
         throw new Error("Could not fetch employee")
     }
@@ -41,7 +47,7 @@ export async function createEmployee(employeeData: CreateEmployeeDTO) {
     const response = await fetch("http://localhost:8080/employees", {
         method: "POST",
         body: JSON.stringify(employeeData),
-        headers: {"Content-Type": "application/json"},
+        headers: authHeaders(),
     });
 
     if(!response.ok){
@@ -53,6 +59,7 @@ export async function createEmployee(employeeData: CreateEmployeeDTO) {
 export async function deleteEmployee(id: number){
     const response = await fetch(`http://localhost:8080/employees/${id}`, {
             method: "DELETE",
+            headers: authHeaders(),
         });
 
     if (!response.ok) {
@@ -64,7 +71,8 @@ export async function editEmployee(id:number, employeeData: UpdateEmployeeDTO){
     const response = await fetch(`http://localhost:8080/employees/${id}`, {
             method: "PATCH",
             body: JSON.stringify(employeeData),
-            headers: {"Content-Type": "application/json"},
+            headers: authHeaders(),
+
         });
 
     if (!response.ok) {

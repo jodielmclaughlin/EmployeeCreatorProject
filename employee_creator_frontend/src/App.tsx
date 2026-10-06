@@ -4,6 +4,7 @@ import './App.css'
 import EmployeeListPage from "./pages/EmployeeListPage";
 import EditEmployee from "./pages/EditEmployee";
 import CreateEmployee from "./pages/CreateEmployee";
+import LoginPage from "./pages/LoginPage.tsx";
 
 function App() {
   return (
@@ -11,9 +12,10 @@ function App() {
       <div>
 
         <Routes>
-          <Route path="/" element={<EmployeeListPage />} />
-          <Route path="/employees/new" element={<CreateEmployee />} />
-          <Route path="/employees/:id/edit" element={<EditEmployee />} />
+            <Route path="/" element={<EmployeeListPage />} />
+            <Route path="/employees/new" element={<CreateEmployee />} />
+            <Route path="/employees/:id/edit" element={<EditEmployee />} />
+            <Route path="/auth/login" element={<LoginPage />} />
         </Routes>
         
       </div>
