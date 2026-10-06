@@ -1,53 +1,51 @@
 package io.nology.project.employee;
 
 
+import io.nology.project.auth.JwtService;
+import io.nology.project.auth.Role;
+import io.nology.project.auth.entity.AppUser;
+import io.nology.project.common.BaseE2ETest;
+import io.nology.project.config.factory.app_user.AppUserFactory;
+import io.nology.project.config.factory.app_user.AppUserFactoryOptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.http.HttpStatus;
-
-import static io.restassured.RestAssured.given;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
-
 import java.time.LocalDate;
 import java.util.HashMap;
-
 import io.nology.project.config.factory.employee.EmployeeFactory;
 import io.nology.project.config.factory.employee.EmployeeFactoryOptions;
 import io.nology.project.employee.entity.ContractType;
 import io.nology.project.employee.entity.Employee;
-import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Sql(scripts = "/sql/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-@ActiveProfiles("test")
-public class EmployeeE2ETest {
-
-    @LocalServerPort
-    private int port;
+public class EmployeeE2ETest extends BaseE2ETest {
 
     private EmployeeFactory employeeFactory;
+    private AppUser admin;
+    private AppUserFactory appUserFactory;
 
     @Autowired 
-    public EmployeeE2ETest(EmployeeFactory employeeFactory){
+    public EmployeeE2ETest(EmployeeFactory employeeFactory, JwtService jwtService, AppUserFactory appUserFactory){
+        super(jwtService);
         this.employeeFactory = employeeFactory;
+        this.appUserFactory = appUserFactory;
     }
 
-    @BeforeEach 
-    void setUp() {
-        RestAssured.port = port;
+    @BeforeEach
+    private void setupAdminUser(){
+        var opts = AppUserFactoryOptions.builder().role(Role.ADMIN).build();
+        admin = this.appUserFactory.create(opts);
     }
+
+
     @Test 
     public void getAllEmployees_whenNoEmployees_returnsEmptyArray(){
-        given().when().get("/employees")
+        spec().withJwt(admin).build().when().get("/employees")
                 .then().statusCode(HttpStatus.OK.value())
                 .body("$", hasSize(0));
     }
@@ -57,7 +55,7 @@ public class EmployeeE2ETest {
         EmployeeFactoryOptions options = EmployeeFactoryOptions.builder().build();
         this.employeeFactory.create(options, 10);
 
-        given().when().get("/employees")
+        spec().withJwt(admin).build().when().get("/employees")
                 .then().statusCode(HttpStatus.OK.value())
                 .body("$", hasSize(10))
                 .body(matchesJsonSchemaInClasspath("schema/employee-list-schema.json"));
@@ -78,7 +76,7 @@ public class EmployeeE2ETest {
         Employee jodie = this.employeeFactory.create(options);
         Long id = jodie.getId();
 
-        given().when().get("/employees/" + id)
+        spec().withJwt(admin).build().when().get("/employees/" + id)
                 .then().statusCode(HttpStatus.OK.value())
                 .body("firstName", equalTo("Jodie"))
                 .body("lastName", equalTo("McLaughlin"))
@@ -88,7 +86,7 @@ public class EmployeeE2ETest {
 
     @Test 
     public void getById_nonExistentId_returns404(){
-        given().when().get("/employees/" + 1l)
+        spec().withJwt(admin).build().when().get("/employees/" + 1l)
                 .then().statusCode(HttpStatus.NOT_FOUND.value())
                 .body("status", equalTo(404))
                 .body("error", equalTo("Not Found"))
@@ -98,7 +96,7 @@ public class EmployeeE2ETest {
 
     @Test 
     public void getById_invalidDataTypeId_returnsBadRequest(){
-        given().when().get("/employees/" + "apple")
+        spec().withJwt(admin).build().when().get("/employees/" + "apple")
                 // assert
                 .then().log().all().statusCode(HttpStatus.BAD_REQUEST.value())
                 .body("status", equalTo(400))
@@ -113,7 +111,7 @@ public class EmployeeE2ETest {
         data.put("firstName", "Jodie");
         data.put("lastName", "McLaughlin");
 
-        given().contentType(ContentType.JSON).body(data).when().log().all()
+        spec().withJwt(admin).build().contentType(ContentType.JSON).body(data).when().log().all()
                 .post("/employees")
                 .then().log().all()
                 .statusCode(HttpStatus.BAD_REQUEST.value());
@@ -131,7 +129,7 @@ public class EmployeeE2ETest {
         data.put("jobTitle", "Test Engineer");
         data.put("startDate", "2008-10-07");
 
-        given().contentType(ContentType.JSON).body(data).when().log().all()
+        spec().withJwt(admin).build().contentType(ContentType.JSON).body(data).when().log().all()
                 .post("/employees")
                 .then()
                 .statusCode(HttpStatus.CREATED.value())
@@ -148,7 +146,7 @@ public class EmployeeE2ETest {
 
         HashMap<String, String> data = new HashMap<>();
         data.put("firstName", "  ");
-        given().contentType(ContentType.JSON).body(data).when().log().all()
+        spec().withJwt(admin).build().contentType(ContentType.JSON).body(data).when().log().all()
                 .patch("/employees/" + fakeEmployee.getId())
                 .then()
                 .statusCode(HttpStatus.BAD_REQUEST.value());
@@ -160,7 +158,7 @@ public class EmployeeE2ETest {
         HashMap<String, String> data = new HashMap<>();
         data.put("firstName", "updated");
 
-        given().contentType(ContentType.JSON).body(data).when().log().all()
+        spec().withJwt(admin).build().contentType(ContentType.JSON).body(data).when().log().all()
                 .patch("/employees/2")
                 .then().log().all()
                 .statusCode(HttpStatus.NOT_FOUND.value())
@@ -176,7 +174,7 @@ public class EmployeeE2ETest {
         HashMap<String, String> data = new HashMap<>();
         data.put("firstName", "updated");
 
-        given().contentType(ContentType.JSON).body(data).when().log().all()
+        spec().withJwt(admin).build().contentType(ContentType.JSON).body(data).when().log().all()
                 .patch("/employees/" + fakeEmployee.getId())
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
@@ -186,7 +184,7 @@ public class EmployeeE2ETest {
 
     @Test 
     public void deleteEmployee_EmployeeDoesNotExist_ReturnsNotFound(){
-        given()
+        spec().withJwt(admin).build()
                 .when()
                 .delete("/employees/1")
                 .then()
@@ -200,7 +198,7 @@ public class EmployeeE2ETest {
         EmployeeFactoryOptions options = EmployeeFactoryOptions.builder().build();
         Employee fakeEmployee = this.employeeFactory.create(options);
 
-        given() 
+        spec().withJwt(admin).build()
                 .when()
                 .delete("/employees/" + fakeEmployee.getId())
                 .then()
