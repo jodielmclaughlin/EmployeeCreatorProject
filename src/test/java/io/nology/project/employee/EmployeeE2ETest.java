@@ -11,6 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+
+import static io.restassured.RestAssured.given;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.containsString;
@@ -42,6 +44,16 @@ public class EmployeeE2ETest extends BaseE2ETest {
         admin = this.appUserFactory.create(opts);
     }
 
+    @Test
+    public void appReturns401_whenNoJWTGiven(){
+    given().when().get("/employees")
+            .then().statusCode(HttpStatus.UNAUTHORIZED.value())
+            .body("status", equalTo(401))
+            .body("error", equalTo("Unauthorized"))
+            .body("message", containsString("Authentication required"))
+            .body(matchesJsonSchemaInClasspath("schema/api-error-response-schema.json"));
+
+    }
 
     @Test 
     public void getAllEmployees_whenNoEmployees_returnsEmptyArray(){
