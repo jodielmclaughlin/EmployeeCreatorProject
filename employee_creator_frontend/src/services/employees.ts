@@ -50,6 +50,10 @@ export async function createEmployee(employeeData: CreateEmployeeDTO) {
         headers: authHeaders(),
     });
 
+    if(response.status === 403){
+        throw new Error("You do not have permission to create an employee.");
+    }
+
     if(!response.ok){
         throw new Error("Could not create employee");
     }

@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import type { Employee } from "../../types/employee"
+import {isAdmin} from "../../services/auth.ts";
 
 
 interface EmployeeProps{
@@ -42,7 +43,9 @@ function EmployeeCard({employee, onDelete }: EmployeeProps){
                     <button
                         data-testid={`edit-employee-${employee.id}`}
                         onClick={() => handleEdit(employee.id)}
-                        className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                        disabled={!isAdmin()}
+                        className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700
+                        hover:bg-gray-50 disabled:bg-zinc-300 disabled:cursor-not-allowed disabled:border-transparent disabled:text-black"
                     >
                         Edit
                     </button>
@@ -50,7 +53,9 @@ function EmployeeCard({employee, onDelete }: EmployeeProps){
                     <button
                         data-testid={`delete-employee-${employee.id}`}
                         onClick={() => onDelete(employee)}
-                        className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+                        disabled={!isAdmin()}
+                        className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:cursor-not-allowed
+                        disabled:bg-zinc-300 disabled:border-transparent disabled:text-black"
                     >
                         Remove
                     </button>

@@ -4,9 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { deleteEmployee, getAllEmployees } from "../services/employees";
 import type { Employee } from "../types/employee";
 import EmployeeCard from "../components/Employee/EmployeeCard";
-
-
-
+import {isAdmin} from "../services/auth.ts";
 
 function EmployeeListPage(){
 
@@ -92,7 +90,8 @@ function EmployeeListPage(){
                     <button
                         data-testid="add-employee-button"
                         onClick={handleAddEmployee}
-                        className="rounded-lg bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700">
+                        disabled={!isAdmin()}
+                        className="rounded-lg bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-zinc-300 disabled:border-transparent disabled:text-black">
                         + Add Employee
                     </button>
                 </div>

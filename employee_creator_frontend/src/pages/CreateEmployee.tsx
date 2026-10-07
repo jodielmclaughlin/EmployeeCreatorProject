@@ -8,7 +8,7 @@ function CreateEmployee() {
 
     const onSubmit = async (data: EmployeeFormData) => {
         await createEmployee(data);
-        navigate("/");
+        navigate("/home");
     };
 
     return (

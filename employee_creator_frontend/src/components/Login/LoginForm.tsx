@@ -21,7 +21,7 @@ function LoginForm(){
             const token = await login(data);
             setToken(token);
 
-            navigate("/");
+            navigate("/home");
 
         } catch(error){
             console.error(error);
