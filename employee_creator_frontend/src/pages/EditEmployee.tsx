@@ -30,7 +30,7 @@ function EditEmployee() {
         try {
             await editEmployee(Number(id), data);
 
-            navigate("/");
+            navigate("/home");
         } catch (error) {
             setError("Unable to update employee. Please try again.");
         }

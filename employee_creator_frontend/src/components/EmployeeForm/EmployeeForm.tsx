@@ -274,8 +274,7 @@ function EmployeeForm({
                         <button
                             type="submit"
                             data-testid="submit-employee-button"
-                            className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                        >
+                            className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                             {submitButtonText ?? "Create Employee"}
                         </button>
                     </div>

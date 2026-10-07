@@ -9,16 +9,20 @@ function Header(){
     };
     return(
         <header>
-            <nav>
+            <nav className="sticky top-0 z-50 bg-white shadow-sm flex justify-between px-4">
                 <Link
-                    to="/home">
+                    to="/home"
+                    className="font-medium text-zinc-700 transition-colors hover:text-zinc-950">
                     Home
                 </Link>
                 {isLoggedIn() ? (
-                    <button onClick={handleLogout}>Logout</button>
+                    <button onClick={handleLogout} className="font-medium text-zinc-700 transition-colors hover:text-zinc-950">Logout</button>
                 ) : (
                     <Link
-                        to="/">Login
+                        to="/"
+                        className="font-medium text-zinc-700 transition-colors hover:text-zinc-950"
+                    >
+                        Login
                     </Link>
                 )}
             </nav>
