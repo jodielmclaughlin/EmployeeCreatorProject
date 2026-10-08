@@ -54,7 +54,7 @@ function EmployeeForm({
     const inputStyles =
     "w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200";
     
-    console.log(errors, " ERRORS");
+
 
     //isSubmitSuccessful && reset();
 
