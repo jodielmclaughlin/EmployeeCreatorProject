@@ -24,7 +24,7 @@ function LoginForm(){
             const token = await login(data);
             setToken(token);
 
-            navigate("/home");
+            navigate("/");
 
         } catch(error){
            if(error instanceof Error){

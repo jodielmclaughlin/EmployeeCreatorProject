@@ -5,13 +5,13 @@ function Header(){
     const navigate = useNavigate();
     const handleLogout = () => {
         removeToken();
-        navigate("/");
+        navigate("/login");
     };
     return(
         <header>
             <nav className="sticky top-0 z-50 bg-white shadow-sm flex justify-between px-4">
                 <Link
-                    to="/home"
+                    to="/"
                     data-testid="home-button"
                     className="font-medium text-zinc-700 transition-colors hover:text-zinc-950">
                     Home
@@ -20,7 +20,7 @@ function Header(){
                     <button data-testid="logout-button" onClick={handleLogout} className="font-medium text-zinc-700 transition-colors hover:text-zinc-950">Logout</button>
                 ) : (
                     <Link
-                        to="/"
+                        to="/login"
                         data-testid="login-button"
                         className="font-medium text-zinc-700 transition-colors hover:text-zinc-950"
                     >
