@@ -25,13 +25,19 @@ function EditEmployee() {
     }, [id]);
 
     const onSubmit = async (data: EmployeeFormData) => {
-        if (!id) return;
+        if (!id) {
+            console.error("Cannot update employee: ID is missing");
+            return;
+        }
+
+        console.log("Submitting employee update:", id, data);
 
         try {
             await editEmployee(Number(id), data);
-
+            console.log("Employee update successful. Navigating to list.");
             navigate("/");
         } catch (error) {
+            console.error("Employee update failed:", error);
             setError("Unable to update employee. Please try again.");
         }
     };
